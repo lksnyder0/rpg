@@ -4,8 +4,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <openssl/md5.h>
-
-#include "libs/sha1.c"
+#include <openssl/sha.h>
+#include <openssl/evp.h>
 
 #define HELPMENUSHORT ("[-h] -l LENGTH [-c CHARSET] [-p PARTIAL] [--file FILELOCATION] [--hash HASH] [-r] [--no-screen] [--debug] \n")
 #define HELPMENULONG ("A program to output possible combinations in a character set with a given \n\
@@ -34,6 +34,10 @@ FILE *fp;
 
 void createCompinations(char *, char *, int, char *);
 void createSHA1Hash(char *, char *);
+void createSHA224Hash(char *, char *);
+void createSHA256Hash(char *, char *);
+void createSHA384Hash(char *, char *);
+void createSHA512Hash(char *, char *);
 void createMD5Hash(char *, char *);
 
 void append(char * s, char c) {
@@ -132,6 +136,18 @@ int main(int argc, char *argv[]) {
 			else if (strcmp(argv[i],"sha1") == 0 ) {
 				hashNum = 2;
 			}
+			else if (strcmp(argv[i], "sha224") == 0) {
+				hashNum = 3;
+			}
+			else if (strcmp(argv[i], "sha256") == 0) {
+				hashNum = 4;
+			}
+			else if (strcmp(argv[i], "sha384") == 0) {
+				hashNum = 5;
+			}
+			else if (strcmp(argv[i], "sha512") == 0) {
+				hashNum = 6;
+			}
 			else {
 				printf("hash type not surported\n");
 				printf("supported types: sha1\n");
@@ -157,6 +173,14 @@ void createCompinations(char chars[150], char inputText[100], int desiredLen, ch
 					break;
 					case 2: createSHA1Hash(compiledText, fileLocation);
 					break;
+					case 3: createSHA224Hash(compiledText, fileLocation);
+					break;
+					case 4: createSHA256Hash(compiledText, fileLocation);
+					break;
+					case 5: createSHA384Hash(compiledText, fileLocation);
+					break;
+					case 6: createSHA512Hash(compiledText, fileLocation);
+					break;
 				}
 			}
 			else if (quiet != 1) {
@@ -172,10 +196,11 @@ void createCompinations(char chars[150], char inputText[100], int desiredLen, ch
 
 void createSHA1Hash(char hashInput[50], char fileLocation[150]) {
 	int i;
-	SHA1Context sha1;
-	SHA1Reset(&sha1);
-	SHA1Input(&sha1, (const unsigned char *) hashInput, strlen(hashInput));
-	if (!SHA1Result(&sha1))
+	unsigned char d[20];
+	SHA_CTX sha1;
+	SHA1_Init(&sha1);
+	SHA1_Update(&sha1, (const unsigned char *) hashInput, strlen(hashInput));
+	if (!SHA1_Final(d, &sha1))
 	{
 		fprintf(stderr, "ERROR-- could not compute message digest\n");
 	}
@@ -186,23 +211,123 @@ void createSHA1Hash(char hashInput[50], char fileLocation[150]) {
     		fp = fopen(fileLocation, "a");
     		fprintf(fp, "%s ", hashInput);
     	}
-        for(i = 0; i < 5 ; i++)
+        for(i = 0; i < 20 ; i++)
         {
         	if (quiet != 1) {
-        		printf("%08x", sha1.Message_Digest[i]);
+        		printf("%02x", d[i]);
         	}
         	if (printToFile == 1) {
 				fp = fopen(fileLocation, "a");
-            	fprintf(fp, "%08X", sha1.Message_Digest[i]);
+            	fprintf(fp, "%02x", d[i]);
             }
         }
         if (quiet != 1) {
         	printf("\n");
         }
     	if (printToFile == 1) {fprintf(fp, "\n");fclose(fp);}
-        SHA1Reset(&sha1);
+        //SHA1R(&sha1);
     }
     
+}
+
+void createSHA224Hash(char hashInput[50], char fileLocation[50]) {
+	int i;
+	EVP_MD_CTX mdctx;
+    unsigned char d[28];
+    unsigned int md_len;
+
+    EVP_DigestInit( &mdctx, EVP_sha224() );
+    EVP_DigestUpdate( &mdctx, hashInput, strlen(hashInput) );
+    EVP_DigestFinal_ex( &mdctx, d, &md_len );
+    EVP_MD_CTX_cleanup( &mdctx );
+
+    if (quiet != 1) {printf("text: %s, hash: ", hashInput);}
+    if (printToFile == 1) { fp = fopen(fileLocation, "a");}
+    for (i = 0; i < md_len; i++) {
+    	if (quiet != 1) {
+        	printf("%02x", d[i]);
+    	}
+    	if (printToFile == 1) {
+    		fprintf(fp, "%02x", d[i]);
+    	}
+    }
+    if (quiet != 1) {printf("\n");}
+    if (printToFile == 1) {fprintf(fp, " %s\n", hashInput);;fclose(fp);}
+}
+
+void createSHA256Hash(char hashInput[50], char fileLocation[50]) {
+	int i;
+	EVP_MD_CTX mdctx;
+    unsigned char d[28];
+    unsigned int md_len;
+
+    EVP_DigestInit( &mdctx, EVP_sha256() );
+    EVP_DigestUpdate( &mdctx, hashInput, strlen(hashInput) );
+    EVP_DigestFinal_ex( &mdctx, d, &md_len );
+    EVP_MD_CTX_cleanup( &mdctx );
+
+    if (quiet != 1) {printf("text: %s, hash: ", hashInput);}
+    if (printToFile == 1) { fp = fopen(fileLocation, "a");}
+    for (i = 0; i < md_len; i++) {
+    	if (quiet != 1) {
+        	printf("%02x", d[i]);
+    	}
+    	if (printToFile == 1) {
+    		fprintf(fp, "%02x", d[i]);
+    	}
+    }
+    if (quiet != 1) {printf("\n");}
+    if (printToFile == 1) {fprintf(fp, " %s\n", hashInput);;fclose(fp);}
+}
+
+void createSHA384Hash(char hashInput[50], char fileLocation[50]) {
+	int i;
+	EVP_MD_CTX mdctx;
+    unsigned char d[28];
+    unsigned int md_len;
+
+    EVP_DigestInit( &mdctx, EVP_sha384() );
+    EVP_DigestUpdate( &mdctx, hashInput, strlen(hashInput) );
+    EVP_DigestFinal_ex( &mdctx, d, &md_len );
+    EVP_MD_CTX_cleanup( &mdctx );
+
+    if (quiet != 1) {printf("text: %s, hash: ", hashInput);}
+    if (printToFile == 1) { fp = fopen(fileLocation, "a");}
+    for (i = 0; i < md_len; i++) {
+    	if (quiet != 1) {
+        	printf("%02x", d[i]);
+    	}
+    	if (printToFile == 1) {
+    		fprintf(fp, "%02x", d[i]);
+    	}
+    }
+    if (quiet != 1) {printf("\n");}
+    if (printToFile == 1) {fprintf(fp, " %s\n", hashInput);;fclose(fp);}
+}
+
+void createSHA512Hash(char hashInput[50], char fileLocation[50]) {
+	int i;
+	EVP_MD_CTX mdctx;
+    unsigned char d[64];
+    unsigned int md_len;
+
+    EVP_DigestInit( &mdctx, EVP_sha512() );
+    EVP_DigestUpdate( &mdctx, hashInput, strlen(hashInput) );
+    EVP_DigestFinal_ex( &mdctx, d, &md_len );
+    EVP_MD_CTX_cleanup( &mdctx );
+
+    if (quiet != 1) {printf("text: %s, hash: ", hashInput);}
+    if (printToFile == 1) { fp = fopen(fileLocation, "a");}
+    for (i = 0; i < md_len; i++) {
+    	if (quiet != 1) {
+        	printf("%02x", d[i]);
+    	}
+    	if (printToFile == 1) {
+    		fprintf(fp, "%02x", d[i]);
+    	}
+    }
+    if (quiet != 1) {printf("\n");}
+    if (printToFile == 1) {fprintf(fp, " %s\n", hashInput);;fclose(fp);}
 }
 
 void createMD5Hash(char hashInput[50], char fileLocation[150]) {
@@ -222,7 +347,7 @@ void createMD5Hash(char hashInput[50], char fileLocation[150]) {
     }
     for (i = 0; i < 16; i++) {
     	if (quiet != 1) {
-        	printf("%02X", d[i]);
+        	printf("%02x", d[i]);
     	}
     	if (printToFile == 1) {
     		fprintf(fp, "%02x", d[i]);
