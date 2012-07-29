@@ -30,7 +30,7 @@ int printToFile = 0;
 FILE *fp;
 //hash[0] = '0';
 
-void createCompinations(char *, char *, int, char *);
+void createCombinations(char *, char *, int, char *);
 void createHash(char *, char *);
 
 void append(char * s, char c) {
@@ -93,54 +93,38 @@ int main(int argc, char *argv[]) {
 		else if (strcmp(argv[i], "--file") == 0) {
 			i++;
 			if (argv[i] != 0) {
-				if (debug == 1) {
-					printf("Opening file %s\n", argv[i]);
-				}
+				if (debug == 1) {printf("Opening file %s\n", argv[i]);}
 				fp=fopen(argv[i], "w");
 				if (fp == 0) {
 					printf("Unable to open file?\n");
 					return 1;
 				}
-				else if ( debug == 1 ) {
-					printf("File successfully opened\n");
-				}
+				else if ( debug == 1 ) {printf("File successfully opened\n");}
 				if(strlen(argv[i]) < 150){
 					strncpy(fileLocation, argv[i], 149);
 					printToFile = 1;
 				}
-				else {
-					printf("File location too long.\n");
-				}
+				else {printf("File location too long.\n");}
 				fclose(fp);
 			}
 			else {
 				printf("Need file name!\n");
 			}
 		}
-		else if (strcmp(argv[i], "--no-screen") == 0){
-			quiet = 1;
-		}
+		else if (strcmp(argv[i], "--no-screen") == 0){quiet = 1;}
 		else if (strcmp(argv[i], "--hash") == 0) {
 			i++;
-			if (strcmp(argv[i], "md5") == 0) {
-				//printf("setting hash to md5\n");
-				hashNum = 1;
-			}
-			else if (strcmp(argv[i],"sha1") == 0 ) {
+			if (strcmp(argv[i], "md5") == 0) {hashNum = 1;}
+			else if (strcmp(argv[i],"sha1") == 0 )
 				hashNum = 2;
-			}
-			else if (strcmp(argv[i], "sha224") == 0) {
+			else if (strcmp(argv[i], "sha224") == 0)
 				hashNum = 3;
-			}
-			else if (strcmp(argv[i], "sha256") == 0) {
+			else if (strcmp(argv[i], "sha256") == 0)
 				hashNum = 4;
-			}
-			else if (strcmp(argv[i], "sha384") == 0) {
+			else if (strcmp(argv[i], "sha384") == 0)
 				hashNum = 5;
-			}
-			else if (strcmp(argv[i], "sha512") == 0) {
+			else if (strcmp(argv[i], "sha512") == 0)
 				hashNum = 6;
-			}
 			else {
 				printf("hash type not surported\n");
 				printf("supported types: md5 sha1 sha224 sha256 sha384 sha512\n");
@@ -148,11 +132,11 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}
-	createCompinations(chars, partial, desiredLen, fileLocation);
+	createCombinations(chars, partial, desiredLen, fileLocation);
 	return returnCode;
 }
 
-void createCompinations(char chars[150], char inputText[100], int desiredLen, char fileLocation[150]) {
+void createCombinations(char chars[150], char inputText[100], int desiredLen, char fileLocation[150]) {
 	char compiledText[150] = "";
 	int i = 0;
 	for(i = 0; i < strlen(chars); i++) {
@@ -169,7 +153,7 @@ void createCompinations(char chars[150], char inputText[100], int desiredLen, ch
 			}
 		}
 		if ( strlen(compiledText) != desiredLen) {
-			createCompinations(chars, compiledText, desiredLen, fileLocation);
+			createCombinations(chars, compiledText, desiredLen, fileLocation);
 		}
 	}
 }
