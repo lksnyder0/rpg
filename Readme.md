@@ -9,4 +9,5 @@ Install the openssl-dev package then make && sudo make install inside of the sou
 ## Fedora/RedHat/CentOS
 Install the openssl-devel package then make && sudo make intall inside of the source directory.  
 
+# Running
 To run the program simple use the rpg command.
