@@ -5,7 +5,7 @@ and only requires the openssl libraries.
 
 # Installation
 ## Debian/Ubuntu/Mint
-Install the openssl-dev package then make && sudo make install inside of the source directory.  
+Install the libssl-dev package then make && sudo make install inside of the source directory.  
 ## Fedora/RedHat/CentOS
 Install the openssl-devel package then make && sudo make intall inside of the source directory.  
 
