@@ -139,15 +139,16 @@ int main(int argc, char *argv[]) {
 void createCombinations(char chars[150], char inputText[100], int desiredLen, char fileLocation[150]) {
 	char compiledText[150] = "";
 	int i = 0;
-	for(i = 0; i < strlen(chars); i++) {
+  const int length = strlen(chars);
+	for(i = 0; i < length; i++) {
 		strncpy(compiledText, inputText, desiredLen);
 		append(compiledText, chars[i]);
 		if ( strlen(compiledText) == desiredLen){
 			//printf("hashNum: %d\n", hashNum);
-			if(hashNum != 0){
+			if(hashNum){
 				createHash(compiledText, fileLocation);
 			}
-			else if (quiet != 1) {
+			else if (!quiet) {
 				printf(compiledText);
 				printf("\n");
 			}
