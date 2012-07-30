@@ -67,6 +67,12 @@ int main(int argc, char *argv[]) {
 		else if (strcmp(argv[i], "--length") == 0 || strcmp(argv[i], "-l") == 0) {
 			i++;
 			desiredLen = atoi(argv[i]);
+			if (debug)
+				printf("Set desired length to %d\nb", desiredLen);
+			if(desiredLen > 50 ) {
+				printf("Length is too long length must be lest then 50.\n");
+				return 1;
+			}
 			if (desiredLen == 0) {
 				printf("Invalid Length\n");
 				return 1;
@@ -139,7 +145,7 @@ int main(int argc, char *argv[]) {
 void createCombinations(char chars[150], char inputText[100], int desiredLen, char fileLocation[150]) {
 	char compiledText[150] = "";
 	int i = 0;
-  const int length = strlen(chars);
+    const int length = strlen(chars);
 	for(i = 0; i < length; i++) {
 		strncpy(compiledText, inputText, desiredLen);
 		append(compiledText, chars[i]);

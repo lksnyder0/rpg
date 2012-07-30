@@ -4,3 +4,6 @@ all:
 
 install:
 	install -C bin/rpg /usr/local/bin
+
+uninstall:
+	rm /usr/local/bin/rpg
